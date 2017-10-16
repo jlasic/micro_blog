@@ -18,27 +18,12 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    private PostFeedPresenter presenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                "https://jsonplaceholder.typicode.com" + "/posts",
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d("TEST123a", "onResponse: \n" + response.toString());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("TEST123a", "onErrorResponse: " + error.getMessage());
-                    }
-                });
-        RequestManager.getInstance(this).addToRequestQueue(jsObjRequest);
+        presenter = new PostFeedPresenter(this);
     }
 }
