@@ -8,10 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.lasic.ublog.data.Post;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,12 +19,24 @@ import butterknife.ButterKnife;
  * Created by lasic on 16.10.2017..
  */
 
-public class PostFeedFragment extends Fragment{
+public class FullPostFragment extends Fragment {
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.tv_body)
+    TextView tvBody;
 
-    PostFeedAdapter adapter;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+
+    public static FullPostFragment getInstance(Post post){
+        FullPostFragment f = new FullPostFragment();
+
+        Bundle args = new Bundle();
+        args.putString("title", post.getTitle());
+        args.putString("body", post.getBody());
+
+        f.setArguments(args);
+        return f;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,21 +46,14 @@ public class PostFeedFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_post_feed, container, false);
+        View view = inflater.inflate(R.layout.fragment_post_full, container, false);
         ButterKnife.bind(this, view);
-        if (adapter == null)
-            adapter = new PostFeedAdapter(getContext());
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         return view;
     }
 
-    public void setData(ArrayList<Post> posts, PostInteraction listener){
-        if (adapter == null)
-            adapter = new PostFeedAdapter(getContext());
-        adapter.setPosts(posts);
-        adapter.setClickListener(listener);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        tvTitle.setText(getArguments().getString("title"));
+        tvBody.setText(getArguments().getString("body"));
     }
 }

@@ -1,14 +1,18 @@
 package com.example.lasic.ublog;
 
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,12 +34,12 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements PostFeedInterface{
 
-    @BindView(R.id.viewPager)
-    ViewPager viewPager;
-
-    private ViewPagerAdapter viewPagerAdapter;
+    @BindView(R.id.container)
+    FrameLayout container;
 
     private PostFeedPresenter presenter;
+
+    private PostFeedFragment postFeedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +47,12 @@ public class MainActivity extends AppCompatActivity implements PostFeedInterface
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        viewPager.setAdapter(viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager()));
+        postFeedFragment = new PostFeedFragment();
+
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, postFeedFragment)
+                .commit();
+
         presenter = new PostFeedPresenter(this);
         presenter.setListener(this);
         presenter.getPosts();
@@ -51,32 +60,15 @@ public class MainActivity extends AppCompatActivity implements PostFeedInterface
 
     @Override
     public void onDataReady(ArrayList<Post> posts) {
-        ((PostFeedFragment)viewPagerAdapter.getItem(0)).setData(posts);
-    }
-
-    private static class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private PostFeedFragment postFeedFragment;
-
-        public ViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case 0:
-                    if (postFeedFragment == null)
-                        postFeedFragment = new PostFeedFragment();
-                    return postFeedFragment;
+        postFeedFragment.setData(posts, new PostInteraction(){
+            @Override
+            public void onPostClicked(Post post) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, FullPostFragment.getInstance(post))
+                        .addToBackStack("test")
+                        .commit();
             }
-
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 1;
-        }
+        });
     }
 }
