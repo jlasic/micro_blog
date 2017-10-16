@@ -23,8 +23,13 @@ import java.util.ArrayList;
 public class PostFeedPresenter {
 
     private Context mContext;
-
     private ArrayList<Post> posts;
+
+    private PostFeedInterface listener;
+
+    public void setListener(PostFeedInterface listener) {
+        this.listener = listener;
+    }
 
     public PostFeedPresenter(Context context){
         mContext = context;
@@ -45,8 +50,8 @@ public class PostFeedPresenter {
                     @Override
                     public void onResponse(JSONArray response) {
                         posts = new Gson().fromJson(response.toString(), new TypeToken<ArrayList<Post>>() {}.getType());
-                        for (Post p : posts)
-                            Log.d("TEST123a", "onResponse: " + p.getTitle());
+                        if (listener != null)
+                            listener.onDataReady(posts);
                     }
                 },
                 new Response.ErrorListener() {
