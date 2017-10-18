@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.example.lasic.ublog.data.Post;
-import com.example.lasic.ublog.singletons.Session;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +36,7 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
         ivProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PostFeedActivity.this, PostFeedActivity.class);
+                Intent intent = new Intent(PostFeedActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
