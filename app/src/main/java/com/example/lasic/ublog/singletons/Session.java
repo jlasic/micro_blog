@@ -27,8 +27,16 @@ public class Session {
         return mInstance;
     }
 
+    public boolean isLogged(){
+        return currentUser != null;
+    }
+
     public boolean isCurrentUser(String username){
-        return currentUser != null && currentUser.equals(username);
+        return isLogged() && currentUser.equals(username);
+    }
+
+    public String getCurrentUser(){
+        return currentUser;
     }
 
     private void setCurrentUser(String username){
@@ -43,6 +51,6 @@ public class Session {
                 if (callback!=null)
                     callback.onSuccess(username);
             }
-        }, 2000);
+        }, 1000);
     }
 }
