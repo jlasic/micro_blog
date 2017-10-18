@@ -25,23 +25,22 @@ public class PostFeedPresenter {
     private Context mContext;
     private ArrayList<Post> posts;
 
-    private PostFeedInterface listener;
+    private PostFeedListener listener;
 
-    public void setListener(PostFeedInterface listener) {
+    public void setListener(PostFeedListener listener) {
         this.listener = listener;
     }
 
     public PostFeedPresenter(Context context){
         mContext = context;
         posts = new ArrayList<>();
-        requestPosts();
     }
 
     public ArrayList<Post> getPosts() {
         return posts;
     }
 
-    private void requestPosts(){
+    public void requestPosts(){
         JsonArrayRequest jsObjRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 Constants.POST_REQ_URL,
@@ -51,7 +50,7 @@ public class PostFeedPresenter {
                     public void onResponse(JSONArray response) {
                         posts = new Gson().fromJson(response.toString(), new TypeToken<ArrayList<Post>>() {}.getType());
                         if (listener != null)
-                            listener.onDataReady(posts);
+                            listener.setPosts(posts);
                     }
                 },
                 new Response.ErrorListener() {
@@ -61,6 +60,10 @@ public class PostFeedPresenter {
                     }
                 });
         RequestManager.getInstance(mContext).addToRequestQueue(jsObjRequest);
+    }
+
+    public void showFullPost(Post post){
+        listener.showFullPost(post);
     }
 
 }

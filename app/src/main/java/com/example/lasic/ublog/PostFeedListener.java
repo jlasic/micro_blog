@@ -8,6 +8,8 @@ import java.util.ArrayList;
  * Created by lasic on 16.10.2017..
  */
 
-public interface PostFeedInterface {
-    void onDataReady(ArrayList<Post> posts);
+public interface PostFeedListener {
+    void showFullPost(Post post);
+    void setPosts(ArrayList<Post> posts);
+    void onError(String error);
 }

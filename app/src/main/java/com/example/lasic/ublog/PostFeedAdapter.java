@@ -1,10 +1,8 @@
 package com.example.lasic.ublog;
 
 import android.content.Context;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,16 +20,17 @@ import butterknife.ButterKnife;
 
 public class PostFeedAdapter extends RecyclerView.Adapter {
 
-    private LayoutInflater layoutInflater;
-    private ArrayList<Post> posts;
-    private PostInteraction clickListener;
-
-    public void setClickListener(PostInteraction listener){
-        this.clickListener = listener;
+    public interface PostClickListener {
+        void onPostClicked(Post post);
     }
 
-    public PostFeedAdapter(Context context){
+    private LayoutInflater layoutInflater;
+    private ArrayList<Post> posts;
+    private PostClickListener clickListener;
+
+    public PostFeedAdapter(Context context, PostClickListener listener){
         layoutInflater = LayoutInflater.from(context);
+        clickListener = listener;
     }
 
     public void setPosts(ArrayList<Post> posts){
