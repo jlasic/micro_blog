@@ -2,6 +2,8 @@ package com.example.lasic.ublog;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -15,6 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.lasic.ublog.data.Post;
+import com.example.lasic.ublog.helpers.Utils;
+import com.example.lasic.ublog.singletons.Session;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,8 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private enum State{
         IDLE,
         LOGIN,
-        REGISTER,
-        WAITING
+        REGISTER
     }
 
     @BindView(R.id.selector)
@@ -58,6 +63,9 @@ public class LoginActivity extends AppCompatActivity {
     Button btnConfirm;
 
     private State mState;
+    private String username;
+    private String email;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,11 +141,6 @@ public class LoginActivity extends AppCompatActivity {
                 loaderView.setVisibility(View.GONE);
                 etUsername.requestFocus();
                 break;
-            case WAITING:
-                loginSelector.setVisibility(View.GONE);
-                loginForm.setVisibility(View.GONE);
-                loaderView.setVisibility(View.VISIBLE);
-                break;
         }
         etUsername.setError(null);
         etEmail.setError(null);
@@ -152,11 +155,17 @@ public class LoginActivity extends AppCompatActivity {
         switch (mState){
             case REGISTER:
             case LOGIN:
-                setState(State.IDLE);
-                break;
-            default:
-                super.onBackPressed();
+                if (!isLoading()) {
+                    setState(State.IDLE);
+                    return;
+                }
         }
+
+        super.onBackPressed();
+    }
+
+    private boolean isLoading(){
+        return loaderView.getVisibility() == View.VISIBLE;
     }
 
     /**
@@ -172,28 +181,45 @@ public class LoginActivity extends AppCompatActivity {
         etPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = etUsername.getText().toString();
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
+        username = etUsername.getText().toString();
+        email = etEmail.getText().toString();
+        password = etPassword.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        // Check for a valid password
+        if (TextUtils.isEmpty(password)) {
+            etPassword.setError(getString(R.string.error_field_required));
+            focusView = etPassword;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
             etPassword.setError(getString(R.string.error_invalid_password));
             focusView = etPassword;
             cancel = true;
         }
 
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            etEmail.setError(getString(R.string.error_field_required));
-            focusView = etEmail;
+        if (mState == State.REGISTER) {
+            // Check for a valid email address.
+            if (TextUtils.isEmpty(email)) {
+                etEmail.setError(getString(R.string.error_field_required));
+                focusView = etEmail;
+                cancel = true;
+            } else if (!isEmailValid(email)) {
+                etEmail.setError(getString(R.string.error_invalid_email));
+                focusView = etEmail;
+                cancel = true;
+            }
+        }
+
+        // Check for a valid username
+        if (TextUtils.isEmpty(username)) {
+            etUsername.setError(getString(R.string.error_field_required));
+            focusView = etUsername;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            etEmail.setError(getString(R.string.error_invalid_email));
-            focusView = etEmail;
+        } else if (!isUsernameValid(username)) {
+            etUsername.setError(getString(R.string.error_invalid_username));
+            focusView = etUsername;
             cancel = true;
         }
 
@@ -225,17 +251,29 @@ public class LoginActivity extends AppCompatActivity {
      * Shows the progress UI and hides the login form.
      */
     private void showProgress(final boolean show) {
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        if (show) {
+            Utils.hideKeyboard(this);
+            switch (mState){
+                case LOGIN:
+                    Session.getInstance(this).login(username, new SimpleCallback<String>() {
+                        @Override
+                        public void onSuccess(String data) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("username", data);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
+                        }
 
-        loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
-        loginForm.animate().setDuration(shortAnimTime).alpha(
-                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                loginForm.setVisibility(show ? View.GONE : View.VISIBLE);
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
+                    break;
             }
-        });
+        }
 
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         loaderView.setVisibility(show ? View.VISIBLE : View.GONE);
         loaderView.animate().setDuration(shortAnimTime).alpha(
                 show ? 1 : 0).setListener(new AnimatorListenerAdapter() {

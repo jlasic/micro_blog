@@ -1,4 +1,4 @@
-package com.example.lasic.ublog;
+package com.example.lasic.ublog.helpers;
 
 /**
  * Created by lasic on 16.10.2017..
