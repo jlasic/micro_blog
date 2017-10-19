@@ -62,9 +62,12 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
             });
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.container,  new PostFeedFragment())
-                .commit();
+        //fragment manager takes care of saving fragments back-stack state
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new PostFeedFragment())
+                    .commit();
+        }
     }
 
     @Override
