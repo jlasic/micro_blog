@@ -43,7 +43,7 @@ public class Session {
         currentUser = username;
     }
 
-    public void login(final String username, final SimpleCallback<String> callback){
+    public void login(final String username, final SimpleCallback<String, String> callback){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
