@@ -53,4 +53,19 @@ public class Session {
             }
         }, 1000);
     }
+
+    public void post(final String title, final String content, final SimpleCallback<String, String> callback){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (callback!=null)
+                    callback.onSuccess("postJSON");
+
+                //TODO: remove this, only done for testing puropses
+                PostManager.getInstance(mContext).addPost(
+                        new Post(0,0,title,content)
+                );
+            }
+        }, 1000);
+    }
 }

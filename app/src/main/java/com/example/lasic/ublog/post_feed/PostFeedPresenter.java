@@ -7,8 +7,10 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.lasic.ublog.SimpleCallback;
 import com.example.lasic.ublog.data.Post;
 import com.example.lasic.ublog.helpers.Constants;
+import com.example.lasic.ublog.singletons.PostManager;
 import com.example.lasic.ublog.singletons.RequestManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,25 +44,19 @@ public class PostFeedPresenter {
     }
 
     public void requestPosts(){
-        JsonArrayRequest jsObjRequest = new JsonArrayRequest(
-                Request.Method.GET,
-                Constants.POST_REQ_URL,
-                null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        posts = new Gson().fromJson(response.toString(), new TypeToken<ArrayList<Post>>() {}.getType());
-                        if (listener != null)
-                            listener.setPosts(posts);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("TEST123a", "onErrorResponse: " + error.getMessage());
-                    }
-                });
-        RequestManager.getInstance(mContext).addToRequestQueue(jsObjRequest);
+        PostManager.getInstance(mContext).requestNewPosts(new SimpleCallback<ArrayList<Post>, String>() {
+            @Override
+            public void onSuccess(ArrayList<Post> data) {
+                posts = data;
+                if (listener != null)
+                    listener.setPosts(posts);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 
     public void showFullPost(Post post){

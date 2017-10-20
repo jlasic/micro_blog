@@ -2,6 +2,12 @@
     <string name="app_name">uBlog</string>
     <string name="title_activity_login">Sign in</string>
 
+    <!-- create post strings -->
+    <string name="post_title">Title</string>
+    <string name="post_content">Post content</string>
+    <string name="create_post_activity">Create new post</string>
+    <string name="action_post">Post</string>
+
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>
     <string name="prompt_email">Email</string>

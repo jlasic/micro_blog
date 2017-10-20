@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.example.lasic.ublog.CreatePostActivity;
 import com.example.lasic.ublog.LoginActivity;
 import com.example.lasic.ublog.R;
 import com.example.lasic.ublog.data.Post;
@@ -16,6 +17,7 @@ import com.example.lasic.ublog.singletons.Session;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PostFeedActivity extends AppCompatActivity implements PostFeedFragment.PostFeedNavigation{
 
@@ -70,6 +72,11 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
                     .add(R.id.container, new PostFeedFragment())
                     .commit();
         }
+    }
+    @OnClick(R.id.fab)
+    void newPost (){
+        Intent intent = new Intent(PostFeedActivity.this, CreatePostActivity.class);
+        startActivity(intent);
     }
 
     @Override
