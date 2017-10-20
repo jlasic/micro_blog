@@ -1,4 +1,4 @@
-package com.example.lasic.ublog;
+package com.example.lasic.ublog.post_feed;
 
 import android.content.Context;
 import android.util.Log;

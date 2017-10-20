@@ -1,4 +1,4 @@
-package com.example.lasic.ublog;
+package com.example.lasic.ublog.post_feed;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.example.lasic.ublog.LoginActivity;
+import com.example.lasic.ublog.R;
 import com.example.lasic.ublog.data.Post;
 import com.example.lasic.ublog.singletons.Session;
 
