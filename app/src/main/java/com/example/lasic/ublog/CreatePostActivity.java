@@ -84,7 +84,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
         // Check for a valid title
         if (TextUtils.isEmpty(content)) {
-            etTitle.setError(getString(R.string.error_field_required));
+            etContent.setError(getString(R.string.error_field_required));
             focusView = etContent;
             cancel = true;
         }
