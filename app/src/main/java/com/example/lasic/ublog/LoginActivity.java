@@ -255,7 +255,24 @@ public class LoginActivity extends AppCompatActivity {
             Utils.hideKeyboard(this);
             switch (mState){
                 case LOGIN:
-                    Session.getInstance(this).login(username, new SimpleCallback<String, String>() {
+                    Session.getInstance(this).login(username, password, new SimpleCallback<String, String>() {
+                        @Override
+                        public void onSuccess(String data) {
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("username", data);
+                            resultIntent.putExtras(getIntent().getExtras());
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                        }
+                    });
+                    break;
+                case REGISTER:
+                    Session.getInstance(this).register(username, email, password, new SimpleCallback<String, String>() {
                         @Override
                         public void onSuccess(String data) {
                             Intent resultIntent = new Intent();

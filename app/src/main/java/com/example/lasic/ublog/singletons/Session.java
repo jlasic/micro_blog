@@ -43,7 +43,18 @@ public class Session {
         currentUser = username;
     }
 
-    public void login(final String username, final SimpleCallback<String, String> callback){
+    public void login(final String username, String password, final SimpleCallback<String, String> callback){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setCurrentUser(username);
+                if (callback!=null)
+                    callback.onSuccess(username);
+            }
+        }, 1000);
+    }
+
+    public void register(final String username, String email, String password, final SimpleCallback<String, String> callback){
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
