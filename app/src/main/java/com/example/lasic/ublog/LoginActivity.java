@@ -260,6 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onSuccess(String data) {
                             Intent resultIntent = new Intent();
                             resultIntent.putExtra("username", data);
+                            resultIntent.putExtras(getIntent().getExtras());
                             setResult(Activity.RESULT_OK, resultIntent);
                             finish();
                         }

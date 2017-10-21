@@ -2,11 +2,18 @@
     <string name="app_name">uBlog</string>
     <string name="title_activity_login">Sign in</string>
 
+    <string name="msg_cancel">Cancel</string>
+
     <!-- create post strings -->
     <string name="post_title">Title</string>
     <string name="post_content">Post content</string>
-    <string name="create_post_activity">Create new post</string>
+    <string name="create_post_activity">New post</string>
     <string name="action_post">Post</string>
+
+    <!-- alert not logged in -->
+    <string name="alert_not_logged_title">Not logged in</string>
+    <string name="alert_not_logged_message">In order to create a new post you need to be logged in.</string>
+    <string name="alert_not_logged_login">Log in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_username">Username</string>

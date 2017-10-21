@@ -1,7 +1,9 @@
 package com.example.lasic.ublog.post_feed;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +25,9 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
 
     private static final int LOGIN_REQ_CODE = 822;
     private static final String ARG_USER = "user";
+    public static final String ARG_ACTION = "login.action";
+    public static final int ACTION_MY_PROFILE = 32;
+    public static final int ACTION_NEW_POST = 54;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -60,6 +65,7 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
                     }
                     else {
                         Intent intent = new Intent(PostFeedActivity.this, LoginActivity.class);
+                        intent.putExtra(ARG_ACTION, ACTION_MY_PROFILE);
                         startActivityForResult(intent, LOGIN_REQ_CODE);
                     }
                 }
@@ -75,8 +81,25 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
     }
     @OnClick(R.id.fab)
     void newPost (){
-        Intent intent = new Intent(PostFeedActivity.this, CreatePostActivity.class);
-        startActivity(intent);
+        if (Session.getInstance(this).isLogged()) {
+            Intent intent = new Intent(PostFeedActivity.this, CreatePostActivity.class);
+            startActivity(intent);
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.alert_not_logged_message)
+                    .setTitle(R.string.alert_not_logged_title);
+            builder.setPositiveButton(R.string.alert_not_logged_login, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(PostFeedActivity.this, LoginActivity.class);
+                    intent.putExtra(ARG_ACTION, ACTION_NEW_POST);
+                    startActivityForResult(intent, LOGIN_REQ_CODE);
+                }
+            });
+            builder.setNegativeButton(R.string.msg_cancel, null);
+            builder.create().show();
+        }
     }
 
     @Override
@@ -90,8 +113,15 @@ public class PostFeedActivity extends AppCompatActivity implements PostFeedFragm
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && requestCode == LOGIN_REQ_CODE)
-            startMyProfile();
+        if (resultCode == Activity.RESULT_OK && requestCode == LOGIN_REQ_CODE) {
+            int action = data.getIntExtra(ARG_ACTION, -1);
+            if (action == ACTION_NEW_POST){
+                Intent intent = new Intent(PostFeedActivity.this, CreatePostActivity.class);
+                startActivity(intent);
+            }
+            else if (action == ACTION_MY_PROFILE)
+                startMyProfile();
+        }
         else
             super.onActivityResult(requestCode, resultCode, data);
     }
